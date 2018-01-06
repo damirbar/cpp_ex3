@@ -14,7 +14,7 @@ char *MemoryManager::getMemory(size_t size) {
 
     int check = whichPowerOfTwo(size);
     if (check != -1) {
-        return map[whichPowerOfTwo(size)].getFirstFree();
+        return map[check].getFirstFree();
     }
     return nullptr;
 

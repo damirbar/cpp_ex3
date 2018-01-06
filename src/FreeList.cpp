@@ -87,6 +87,7 @@ char *FreeList::getFirstFree() {
         it = it->next;
     }
     if (it) {
+        it->_free = false;
         return it->getBlock();
     }
     return nullptr;

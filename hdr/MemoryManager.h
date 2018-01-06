@@ -8,14 +8,18 @@
 
 #include <cstdlib>
 #include "MemPool.h"
+#include "FreeList.h"
 
 class MemoryManager {
 
+    FreeList *map;
     MemPool &_mmpl;
+
+    int whichPowerOfTwo(size_t n);
 
 public:
 
-    MemoryManager(size_t size);
+    explicit MemoryManager(size_t size);
 
     char *getMemory(size_t size);
 

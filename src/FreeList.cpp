@@ -7,7 +7,6 @@
 
 class FreeList::FreeNode {
 
-
     size_t _blockSize;
     char *block;
 
@@ -15,6 +14,8 @@ public:
 
     static int id;
     const int _id;
+
+    bool _free;
 
     FreeNode *next;
     FreeNode *prev;
@@ -25,13 +26,15 @@ public:
 
     size_t getBlockSize() const;
 
+    char *getBlock();
+
 };
 
 
 int FreeList::FreeNode::id = 0;
 
 FreeList::FreeNode::FreeNode(size_t size)
-        : _blockSize(size), block(new char[size]), _id(id++), next(nullptr), prev(nullptr) {
+        : _blockSize(size), block(new char[size]), _id(id++), _free(true), next(nullptr), prev(nullptr) {
     std::cout << "Created the node " << _id << " of the size " << size << std::endl;
 }
 
@@ -44,9 +47,12 @@ FreeList::FreeNode::~FreeNode() {
     delete block;
 }
 
-FreeList::FreeList() {
-    head = tail = nullptr;
+char *FreeList::FreeNode::getBlock() {
+    return block;
 }
+
+FreeList::FreeList()
+        : _size(0), head(nullptr), tail(nullptr) {}
 
 void FreeList::add(size_t size) {
     if (!head) {
@@ -69,3 +75,20 @@ FreeList::~FreeList() {
         delete head;
     }
 }
+
+size_t FreeList::size() const {
+    return _size;
+}
+
+char *FreeList::getFirstFree() {
+    FreeNode *it = head;
+
+    while (it && !it->_free) {
+        it = it->next;
+    }
+    if (it) {
+        return it->getBlock();
+    }
+    return nullptr;
+}
+

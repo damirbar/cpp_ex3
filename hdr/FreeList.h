@@ -17,13 +17,21 @@ class FreeList {
     FreeNode *head;
     FreeNode *tail;
 
+    size_t _size;
+
 public:
+
+//    class FreeNode;
 
     FreeList();
 
     ~FreeList();
 
+    size_t size() const;
+
     void add(size_t size);
+
+    char *getFirstFree();
 
 };
 

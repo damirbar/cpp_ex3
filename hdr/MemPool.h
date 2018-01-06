@@ -14,6 +14,8 @@
  */
 class MemPool {
 
+    friend class FreeList;
+
     char *_pool;
 
     MemPool();
@@ -28,7 +30,9 @@ public:
 
     static MemPool &getInstance();
 
-    void setPool(int size);
+    void setPool(size_t size);
+
+//    char *getChunk(size_t size);
 };
 
 

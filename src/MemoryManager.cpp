@@ -3,3 +3,6 @@
 //
 
 #include "../hdr/MemoryManager.h"
+
+MemoryManager::MemoryManager(size_t size)
+        : _mmpl(MemPool::getInstance()) {}

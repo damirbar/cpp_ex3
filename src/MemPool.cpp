@@ -2,14 +2,16 @@
 // Created by damir on 06-Jan-18.
 //
 
+#include <cmath>
 #include "../hdr/MemPool.h"
 
 MemPool::MemPool() : _pool(nullptr) {
     std::cout << "MemPool ctor called" << std::endl;
 }
 
-void MemPool::setPool(int size) {
+void MemPool::setPool(size_t size) {
     if (!_pool) {
+        size_t next = (size_t )pow(2, ceil(log(size)/log(2)));
         _pool = new char[size];
     }
     else {

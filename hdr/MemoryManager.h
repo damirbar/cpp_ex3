@@ -6,7 +6,20 @@
 #define CPP_EX3_MEMORYMANAGER_H
 
 
+#include <cstdlib>
+#include "MemPool.h"
+
 class MemoryManager {
+
+    MemPool &_mmpl;
+
+public:
+
+    MemoryManager(size_t size);
+
+    char *getMemory(size_t size);
+
+
 
 };
 

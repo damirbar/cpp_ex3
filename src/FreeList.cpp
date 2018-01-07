@@ -5,64 +5,19 @@
 #include <iostream>
 #include "../hdr/FreeList.h"
 
-class FreeList::FreeNode {
-
-    size_t _blockSize;
-    char *block;
-
-public:
-
-    static int id;
-    const int _id;
-
-    bool _free;
-
-    FreeNode *next;
-    FreeNode *prev;
-
-    explicit FreeNode(size_t size);
-
-    ~FreeNode();
-
-    size_t getBlockSize() const;
-
-    char *getBlock();
-
-};
-
-
-int FreeList::FreeNode::id = 0;
-
-FreeList::FreeNode::FreeNode(size_t size)
-        : _blockSize(size), block(new char[size]), _id(id++), _free(true), next(nullptr), prev(nullptr) {
-    std::cout << "Created the node " << _id << " of the size " << size << std::endl;
-}
-
-size_t FreeList::FreeNode::getBlockSize() const {
-    return _blockSize;
-}
-
-FreeList::FreeNode::~FreeNode() {
-    std::cout << "Deleted the node " << _id << " of the size " << getBlockSize() << std::endl;
-    delete block;
-}
-
-char *FreeList::FreeNode::getBlock() {
-    return block;
-}
 
 FreeList::FreeList()
         : _size(0), head(nullptr), tail(nullptr) {}
 
-void FreeList::add(size_t size) {
-    if (!head) {
-        head = new FreeNode(size);
-        tail = head;
-    } else {
-        FreeNode *tmp = new FreeNode(size);
-        tail->next = tmp;
-        tail = tmp;
-    }
+void FreeList::add(char *block, size_t size) {
+//    if (!head) {
+//        head = new FreeNode(block, size);
+//        tail = head;
+//    } else {
+//        FreeNode *tmp = new FreeNode(block, size);
+//        tail->next = tmp;
+//        tail = tmp;
+//    }
 }
 
 FreeList::~FreeList() {
@@ -80,16 +35,63 @@ size_t FreeList::size() const {
     return _size;
 }
 
-char *FreeList::getFirstFree() {
-    FreeNode *it = head;
+//  Like LinkedList's remove
+char *FreeList::alloc() {
+//    FreeNode *it = head;
 
-    while (it && !it->_free) {
-        it = it->next;
+    if (!head) {
+        return nullptr;
     }
-    if (it) {
-        it->_free = false;
-        return it->getBlock();
-    }
+    FreeNode *ret = head;
+
+    head = head->next;
+//    char *blockRet = ret->getBlock();
+//    delete ret;
+
+//    return ret->getBlock();
+
+//    while (it && !it->_free) {
+//        it = it->next;
+//    }
+//    if (it) {
+//        it->_free = false;
+//        it->prev->next = it->next;
+//        it->next->prev = it->prev;
+//        return it->getBlock();
+//    }
     return nullptr;
+}
+
+//void FreeList::dealloc(char *block) {
+//    if (!head) {
+//        head = new FreeNode(size);
+//        tail = head;
+//    } else {
+//        FreeNode *tmp = new FreeNode(size);
+//        tail->next = tmp;
+//        tail = tmp;
+//    }
+//}
+
+void FreeList::add(FreeNode *f) {
+    if (!head) {
+        head = tail = f;
+    }
+    tail->next = f;
+    tail = f;
+}
+
+FreeNode *FreeList::allocNode() {
+    if (!head) {
+        return nullptr;
+    }
+    FreeNode *ret = head;
+
+    head = head->next;
+    return ret;
+}
+
+FreeNode *FreeList::getHead() {
+    return head;
 }
 

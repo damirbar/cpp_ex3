@@ -12,7 +12,11 @@ MemPool::MemPool() : _pool(nullptr) {
 void MemPool::setPool(size_t size) {
     if (!_pool) {
         size_t next = (size_t )pow(2, ceil(log(size)/log(2)));
-        _pool = new char[size];
+        _pool = new char[next];
+
+        std::cout << "A pool of " << next << " bytes was set at address ";
+        printf("%p", _pool);
+        std::cout << std::endl;
     }
     else {
         std::cerr << "Can't set the pool twice!" << std::endl;
@@ -31,4 +35,8 @@ MemPool::~MemPool() {
 MemPool & MemPool::getInstance() {
     static MemPool instance;
     return instance;
+}
+
+char *MemPool::getPool() {
+    return _pool;
 }

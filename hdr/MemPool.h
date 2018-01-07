@@ -15,6 +15,7 @@
 class MemPool {
 
     friend class FreeList;
+    friend class MemoryManager;
 
     char *_pool;
 
@@ -23,6 +24,8 @@ class MemPool {
     MemPool(const MemPool &other) = delete;
 
     void operator=(const MemPool &other) = delete;
+
+    char *getPool();
 
 public:
 

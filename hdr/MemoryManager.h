@@ -14,6 +14,7 @@ class MemoryManager {
 
     FreeList *map;
     MemPool &_mmpl;
+    size_t _poolSize;
 
     int whichPowerOfTwo(size_t n);
 
@@ -21,10 +22,15 @@ public:
 
     explicit MemoryManager(size_t size);
 
+    ~MemoryManager();
+
     char *getMemory(size_t size);
 
+    void returnMemory(FreeNode *f);
 
+    void printCurrMemoryState();
 
+    void init();
 };
 
 

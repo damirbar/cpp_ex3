@@ -3,5 +3,5 @@ project(cpp_ex3)
 
 set(CMAKE_CXX_STANDARD 11)
 
-set(SOURCE_FILES main.cpp src/MemPool.cpp hdr/MemPool.h src/MemoryManager.cpp hdr/MemoryManager.h src/FreeList.cpp hdr/FreeList.h)
+set(SOURCE_FILES main.cpp src/MemPool.cpp hdr/MemPool.h src/MemoryManager.cpp hdr/MemoryManager.h src/FreeList.cpp hdr/FreeList.h src/FreeNode.cpp hdr/FreeNode.h)
 add_executable(cpp_ex3 ${SOURCE_FILES})

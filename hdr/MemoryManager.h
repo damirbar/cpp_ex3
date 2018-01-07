@@ -18,19 +18,24 @@ class MemoryManager {
 
     int whichPowerOfTwo(size_t n);
 
+    int counters[11];
+
+
 public:
 
     explicit MemoryManager(size_t size);
 
     ~MemoryManager();
 
-    char *getMemory(size_t size);
+    FreeNode *getMemory(size_t size);
 
     void returnMemory(FreeNode *f);
 
     void printCurrMemoryState();
 
     void init();
+
+    void printCurrMemoryStateShortly();
 };
 
 

@@ -26,6 +26,16 @@ int main() {
 
     mngr.printCurrMemoryState();
 
+    FreeNode *mem = mngr.getMemory(3);
+
+
+    mngr.printCurrMemoryState();
+
+    mngr.returnMemory(mem);
+
+    mngr.printCurrMemoryState();
+
+    mngr.printCurrMemoryStateShortly();
 
     cout << "\t\t\t\t\t\t\t\t\t\t\t\t------\t\t\tMain ended\t\t\t------" << endl;
 

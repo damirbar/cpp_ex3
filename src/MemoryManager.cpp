@@ -11,65 +11,42 @@ MemoryManager::MemoryManager(size_t size)
     init();
 }
 
-char *MemoryManager::getMemory(size_t size) {
+FreeNode *MemoryManager::getMemory(size_t size) {
+
+    std::cout << "Got a memory request of size " << size << ", but will return memory of size "
+              << (int) pow(2, ceil(log(size) / log(2))) << std::endl;
 
     char *ret;
 
+    size = (size_t) pow(2, ceil(log(size) / log(2)));
+
     int check = whichPowerOfTwo(size);
     if (check != -1) {
-        return map[check].alloc(); // Wrong at this point.
-    }
-    return nullptr;
 
-//    switch (size) {
-//
-//        case 1:
-//
-//            ret = map[0].alloc();
-//
-//            break;
-//
-//        case 2:
-//            break;
-//
-//        case 4:
-//            break;
-//
-//        case 8:
-//            break;
-//
-//        case 16:
-//            break;
-//
-//        case 32:
-//            break;
-//
-//        case 64:
-//            break;
-//
-//        case 128:
-//            break;
-//
-//        case 256:
-//            break;
-//
-//        case 512:
-//            break;
-//
-//        default:
-//            size_t nextPow = (size_t)pow(2, ceil(log(size)/log(2)));
-//            if (nextPow != size) {
-//                std::cerr << "Not a power of two! Returning nothing" << std::endl;
-//                return nullptr;
-//            }
-//            else {
-//
-//            }
-//            break;
-//    }
-//
-//    return nullptr;
+        int nextPow = (int) pow(2, ceil(log(size) / log(2)));
+
+        for (int i = 0; i < 11; ++i) {
+
+            if (i != check) {
+                if (map[i].size() != 0) {
+                    for (int j = 0; j == 0 || j < nextPow; ++j) {
+                        std::cout << "Popping a block of size " << pow(2, i) << std::endl;
+                        delete map[i].allocNode();
+                        --counters[i];
+                    }
+                }
+            }
+
+            nextPow /= 2;
+        }
+        std::cout << "Returning a block of size " << (int) pow(2, check) << std::endl;
+        --counters[check];
+        return map[check].allocNode();
+    }
+
+    return nullptr;
 }
+
 
 int MemoryManager::whichPowerOfTwo(size_t n) {
     int counter = 0;
@@ -87,7 +64,65 @@ int MemoryManager::whichPowerOfTwo(size_t n) {
 }
 
 void MemoryManager::returnMemory(FreeNode *f) {
-    map[whichPowerOfTwo(f->getBlockSize())].add(f);
+    std::cout << "Attempting to return a memory of size " << f->getBlockSize() << std::endl;
+    int check = whichPowerOfTwo(f->getBlockSize());
+    if (check == -1) {
+        std::cerr << "Error returning memory" << std::endl;
+    } else {
+
+
+        char *block = f->getBlock();
+        size_t size = f->getBlockSize();
+
+        for (int i = 0; i < 11; ++i) {
+            size_t counter = (size_t) pow(2, i);
+
+
+            /* Other version: // doesn't work well
+//            int j = counters[i];
+//            counters[i] += size;
+//            int index = 0;
+//            while (j < counters[i]) {
+//
+//                char *filler = &block[index * counter];
+//                map[i].add(new FreeNode(filler, counter));
+//                j += counter;
+//                ++index;
+//
+//                ++j;
+//            }
+//            size /= 2;
+
+            */
+
+            
+            if (counter <= size) {
+
+                long j = 0, index = 0;
+
+//                do {
+//                    char *filler = &block[index * counter];
+//                    map[i].add(new FreeNode(filler, counter));
+//                    ++counters[i];
+//
+//                    j += counter;
+//                    ++index;
+//                } while (j < size);
+
+
+                for (long j = 0, index = 0; j < size; j += counter, ++index) {
+
+                    char *filler = &block[index * counter];
+                    map[i].add(new FreeNode(filler, counter));
+                    ++counters[i];
+                }
+
+            }
+
+        }
+
+//        map[check].add(f);
+    }
 }
 
 MemoryManager::~MemoryManager() {
@@ -118,28 +153,31 @@ void MemoryManager::printCurrMemoryState() {
             std::cout << "\n" << std::endl;
         }
     }
+}
 
+void MemoryManager::printCurrMemoryStateShortly() {
+    for (int i = 0; i < 11; ++i) {
+        std::cout << "There are " << counters[i] << " free blocks of size " << pow(2, i) << std::endl;
+    }
 }
 
 void MemoryManager::init() {
 
-    char *pool  = _mmpl.getPool();
+    char *pool = _mmpl.getPool();
     size_t size = _poolSize;
 
     for (int i = 0; i < 11; ++i) {
-        size_t counter = (size_t)pow(2, i);
+        size_t counter = (size_t) pow(2, i);
 
+        counters[i] = 0;
         if (counter <= size) {
-
             for (long j = 0, index = 0; j < size; j += counter, ++index) {
 
                 char *filler = &pool[index * counter];
                 map[i].add(new FreeNode(filler, counter));
-
+                ++counters[i];
             }
         }
     }
-
-
 }
 

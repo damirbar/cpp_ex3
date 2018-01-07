@@ -12,8 +12,8 @@ FreeNode::FreeNode(char *block, size_t size)
         : _blockSize(size), _block(block), _id(id++), next(nullptr), prev(nullptr) {
 
 //    std::cout << "Created the node " << _id << " of the size " << size << " at address ";// << addr << std::endl;
-    printf("%p", (void*)_block);
-    std::cout << std::endl;
+//    printf("%p", (void*)_block);
+//    std::cout << std::endl;
 }
 
 size_t FreeNode::getBlockSize() const {

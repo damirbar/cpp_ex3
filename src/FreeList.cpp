@@ -79,15 +79,23 @@ void FreeList::add(FreeNode *f) {
     }
     tail->next = f;
     tail = f;
+    ++_size;
 }
 
 FreeNode *FreeList::allocNode() {
     if (!head) {
         return nullptr;
     }
+
     FreeNode *ret = head;
 
-    head = head->next;
+    if (_size == 1) {
+        head = tail = nullptr;
+    }
+    else {
+        head = head->next;
+    }
+    --_size;
     return ret;
 }
 

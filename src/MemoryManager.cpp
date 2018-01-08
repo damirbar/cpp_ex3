@@ -123,9 +123,8 @@ void MemoryManager::returnMemory(FreeNode *f) {
                 }
             }
         }
-
-//        map[check].add(f);
     }
+    delete f;
 }
 
 MemoryManager::~MemoryManager() {

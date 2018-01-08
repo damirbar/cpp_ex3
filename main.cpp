@@ -27,17 +27,19 @@ int main() {
     mngr.printCurrMemoryState();
 
     FreeNode *mem = mngr.getMemory(3);
+    FreeNode *mem1 = mngr.getMemory(3);
 
-    cout << "\n\nAfter alloc:\n" << endl;
+    cout << "\n\nAfter two alloc:\n" << endl;
     mngr.printCurrMemoryState();
 
+
+    mngr.returnMemory(mem1);
+    cout << "\n\nAfter first dealloc:\n" << endl;
+    mngr.printCurrMemoryState();
     mngr.returnMemory(mem);
 
-
-    cout << "\n\nAfter dealloc:\n" << endl;
+    cout << "\n\nAfter sec dealloc:\n" << endl;
     mngr.printCurrMemoryState();
-
-//    mngr.printCurrMemoryStateShortly();
 
     cout << "\t\t\t\t\t\t\t\t\t\t\t\t------\t\t\tMain ended\t\t\t------" << endl;
 

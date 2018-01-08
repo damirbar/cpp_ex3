@@ -26,7 +26,7 @@ void MemPool::setPool(size_t size) {
 MemPool::~MemPool() {
     std::cout << "MemPool dtor called" << std::endl;
     if (_pool) {
-        delete _pool;
+        delete[] _pool;
         _pool = nullptr;
         std::cout << "Pool deleted" << std::endl;
     }

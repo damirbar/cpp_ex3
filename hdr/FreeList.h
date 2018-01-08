@@ -41,6 +41,10 @@ public:
 
     char *alloc();
 
+    void removeCopyOfNode(FreeNode *f);
+
+    void addCopyOfNode(FreeNode *f);
+
 //    void dealloc(char *block);
 
 };

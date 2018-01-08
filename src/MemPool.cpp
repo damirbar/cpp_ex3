@@ -13,7 +13,7 @@ void MemPool::setPool(size_t size) {
     if (!_pool) {
         size_t next = (size_t )pow(2, ceil(log(size)/log(2)));
         _pool = new char[next];
-
+//        _pool = (char*)malloc(sizeof(char) * next);
         std::cout << "A pool of " << next << " bytes was set at address ";
         printf("%p", _pool);
         std::cout << std::endl;
@@ -27,6 +27,7 @@ MemPool::~MemPool() {
     std::cout << "MemPool dtor called" << std::endl;
     if (_pool) {
         delete[] _pool;
+//        free(_pool);
         _pool = nullptr;
         std::cout << "Pool deleted" << std::endl;
     }

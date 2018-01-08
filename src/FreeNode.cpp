@@ -22,6 +22,7 @@ size_t FreeNode::getBlockSize() const {
 
 FreeNode::~FreeNode() {
     std::cout << "Deleted the node " << _id << " of the size " << getBlockSize() << std::endl;
+//    _block = nullptr;
 //      delete block;
 }
 

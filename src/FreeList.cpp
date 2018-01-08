@@ -108,3 +108,44 @@ FreeNode *FreeList::getHead() {
     return head;
 }
 
+void FreeList::removeCopyOfNode(FreeNode *f) {
+    FreeNode *node = head;
+    if (! head) {
+        return;
+    }
+    if (node->getBlock() == f->getBlock()) {
+        std::cout << "Removed the head node with id = " << node->_id << std::endl;
+        head = head->next;
+//        node = node->next;
+        --_size;
+        return;
+    }
+
+    while (node->getBlock() != f->getBlock() && node->next != nullptr) {
+        node = node->next;
+    }
+    if (node->getBlock() == f->getBlock()) {
+        std::cout << "Removed the node with id = " << node->_id << std::endl;
+        node->prev->next = node->next;
+        if (node->next != nullptr) {
+            node->next->prev = node->prev;
+        }
+        --_size;
+    }
+}
+
+void FreeList::addCopyOfNode(FreeNode *f) {
+    FreeNode *substitutor = new FreeNode(f->getBlock(), f->getBlockSize());
+    if (!head) {
+        head = tail = substitutor;
+    }
+    else {
+        head->prev = substitutor;
+        substitutor->next = head;
+        head = substitutor;
+//        tail->next = f;
+//        tail = f;
+    }
+    ++_size;
+}
+

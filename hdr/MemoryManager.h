@@ -13,6 +13,7 @@
 class MemoryManager {
 
     FreeList *map;
+    FreeList *allocated;
     MemPool &_mmpl;
     size_t _poolSize;
     size_t _currAlloc;
@@ -33,6 +34,8 @@ public:
     void returnMemory(FreeNode *f);
 
     void printCurrMemoryState();
+
+    void printCurrAllocatedMemoryState();
 
     void init();
 

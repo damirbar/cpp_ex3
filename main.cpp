@@ -33,7 +33,6 @@ int main() {
 
     mngr.returnMemory(mem);
 
-
     cout << "\n\nAfter dealloc:\n" << endl;
     mngr.printCurrMemoryState();
 

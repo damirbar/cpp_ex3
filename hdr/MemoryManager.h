@@ -15,6 +15,7 @@ class MemoryManager {
     FreeList *map;
     MemPool &_mmpl;
     size_t _poolSize;
+    size_t _currAlloc;
 
     int whichPowerOfTwo(size_t n);
 

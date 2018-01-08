@@ -6,7 +6,7 @@
 #include "../hdr/MemoryManager.h"
 
 MemoryManager::MemoryManager(size_t size)
-        : map(new FreeList[11]), _mmpl(MemPool::getInstance()), _poolSize(size) {
+        : map(new FreeList[11]), _mmpl(MemPool::getInstance()), _poolSize((size_t )pow(2, ceil(log(size)/log(2)))) {
     _mmpl.setPool(size);
     init();
 }
@@ -35,6 +35,7 @@ FreeNode *MemoryManager::getMemory(size_t size) {
                         --counters[i];
                     }
                 }
+                // TODO else
             }
 
             nextPow /= 2;
@@ -66,10 +67,10 @@ int MemoryManager::whichPowerOfTwo(size_t n) {
 void MemoryManager::returnMemory(FreeNode *f) {
     std::cout << "Attempting to return a memory of size " << f->getBlockSize() << std::endl;
     int check = whichPowerOfTwo(f->getBlockSize());
+    std::cout << "the power is:"<<check<<std::endl;
     if (check == -1) {
         std::cerr << "Error returning memory" << std::endl;
     } else {
-
 
         char *block = f->getBlock();
         size_t size = f->getBlockSize();
@@ -96,10 +97,10 @@ void MemoryManager::returnMemory(FreeNode *f) {
             */
 
             
-            if (counter <= size) {
+            if (counter <= _poolSize) {
 
-                long j = 0, index = 0;
-
+//                long j = 0, index = 0;
+//
 //                do {
 //                    char *filler = &block[index * counter];
 //                    map[i].add(new FreeNode(filler, counter));
@@ -111,14 +112,16 @@ void MemoryManager::returnMemory(FreeNode *f) {
 
 
                 for (long j = 0, index = 0; j < size; j += counter, ++index) {
-
-                    char *filler = &block[index * counter];
+                    char *filler;
+                    if (counter > size) {
+                        filler = &block[(index * counter) - (counter - size)];
+                    } else {
+                        filler = &block[index * counter];
+                    }
                     map[i].add(new FreeNode(filler, counter));
                     ++counters[i];
                 }
-
             }
-
         }
 
 //        map[check].add(f);
@@ -126,13 +129,7 @@ void MemoryManager::returnMemory(FreeNode *f) {
 }
 
 MemoryManager::~MemoryManager() {
-//    for (int i = 0; i < 11; ++i) {
-//        delete map[i];
-//    }
-//    delete[] map;
-//    for (int i = 0; i < 11; ++i) {
-//
-//    }
+    delete[] map;
 }
 
 void MemoryManager::printCurrMemoryState() {
@@ -144,7 +141,7 @@ void MemoryManager::printCurrMemoryState() {
         if (it) {
             std::cout << "Showing state for blocks of size " << pow(2, i) << ":" << std::endl;
             while (it != map[i].tail) {
-                std::cout << *it << " --> ";
+                std::cout << *it << " <-- ";
                 it = it->next;
             }
             if (it == map[i].tail) {

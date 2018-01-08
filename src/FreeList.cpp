@@ -59,7 +59,7 @@ char *FreeList::alloc() {
 //        it->next->prev = it->prev;
 //        return it->getBlock();
 //    }
-    return nullptr;
+    return ret->getBlock();
 }
 
 //void FreeList::dealloc(char *block) {
@@ -77,8 +77,13 @@ void FreeList::add(FreeNode *f) {
     if (!head) {
         head = tail = f;
     }
-    tail->next = f;
-    tail = f;
+    else {
+        head->prev = f;
+        f->next = head;
+        head = f;
+//        tail->next = f;
+//        tail = f;
+    }
     ++_size;
 }
 

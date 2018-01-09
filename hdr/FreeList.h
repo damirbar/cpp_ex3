@@ -44,9 +44,9 @@ public:
 
     char *alloc();
 
-    FreeNode * removeCopyOfNode(FreeNode *f);
+    FreeNode * removeNode(FreeNode *f);
 
-    void addCopyOfNode(FreeNode *f);
+    void addNode(FreeNode *f);
 
 //    void dealloc(char *block);
 

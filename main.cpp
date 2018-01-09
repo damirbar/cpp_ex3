@@ -44,8 +44,8 @@ int main() {
 
     FreeNode *mem =  mngr.getMemory(3);
     FreeNode *mem1 = mngr.getMemory(2);
-//    FreeNode *mem2 = mngr.getMemory(3);
-//    FreeNode *mem3 = mngr.getMemory(5);
+    FreeNode *mem2 = mngr.getMemory(3);
+    FreeNode *mem3 = mngr.getMemory(5);
 
     cout << "\n\nAfter alloc:\n" << endl;
     mngr.printCurrMemoryState();
@@ -53,18 +53,18 @@ int main() {
     cout << "\n\nUsed Memory:" << endl;
     mngr.printCurrAllocatedMemoryState();
 
-    mngr.returnMemory(mem);
+    mngr.returnMemory(mem3);
     cout << "\n\nAfter dealloc1:\n" << endl;
     mngr.printCurrMemoryState();
-    mngr.returnMemory(mem1);
+    mngr.returnMemory(mem2);
     cout << "\n\nAfter dealloc2:\n" << endl;
     mngr.printCurrMemoryState();
-//    mngr.returnMemory(mem2);
-//    cout << "\n\nAfter dealloc3:\n" << endl;
-//    mngr.printCurrMemoryState();
-//    mngr.returnMemory(mem3);
-//    cout << "\n\nAfter dealloc4:\n" << endl;
-//    mngr.printCurrMemoryState();
+    mngr.returnMemory(mem);
+    cout << "\n\nAfter dealloc3:\n" << endl;
+    mngr.printCurrMemoryState();
+    mngr.returnMemory(mem1);
+    cout << "\n\nAfter dealloc4:\n" << endl;
+    mngr.printCurrMemoryState();
 
 
     cout << "\t\t\t\t\t\t\t\t\t\t\t\t------\t\t\tMain ended\t\t\t------" << endl;

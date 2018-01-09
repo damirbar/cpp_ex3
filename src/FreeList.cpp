@@ -172,7 +172,7 @@ FreeNode *FreeList::getHead() {
     return head;
 }
 
-FreeNode *FreeList::removeCopyOfNode(FreeNode *f) {
+FreeNode *FreeList::removeNode(FreeNode *f) {
     FreeNode *node = head;
     if (!head) {
         return nullptr;
@@ -203,7 +203,7 @@ FreeNode *FreeList::removeCopyOfNode(FreeNode *f) {
     //  updatePairs();
 }
 
-void FreeList::addCopyOfNode(FreeNode *f) {
+void FreeList::addNode(FreeNode *f) {
 //    FreeNode *substitutor = new FreeNode(f->getBlock(), f->getBlockSize());
     f->next = f->prev = nullptr;
     FreeNode *substitutor = f;
@@ -278,7 +278,7 @@ char *FreeList::getPairAt(char *block) {
 //            } else if (pow(2, i) == size) {
 //                test = true;
 //                FreeList &list = allocated[whichPowerOfTwo(f->getBlockSize())];
-//                map[whichPowerOfTwo(f->getBlockSize())].add(list.removeCopyOfNode(f));
+//                map[whichPowerOfTwo(f->getBlockSize())].add(list.removeNode(f));
 //            } else {
 //                map[i].add(new FreeNode(block, counter));
 //            }
@@ -296,7 +296,7 @@ char *FreeList::getPairAt(char *block) {
 //            } else if (pow(2, i + 1) == size) {
 //                test = true;
 //                FreeList &list = allocated[whichPowerOfTwo(f->getBlockSize())];
-//                map[whichPowerOfTwo(f->getBlockSize())].add(list.removeCopyOfNode(f));
+//                map[whichPowerOfTwo(f->getBlockSize())].add(list.removeNode(f));
 //            } else {
 //                map[i + 1].add(new FreeNode(block, counter));
 //            }

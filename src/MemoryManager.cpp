@@ -45,7 +45,7 @@ FreeNode *MemoryManager::getMemory(size_t size) {
                 std::cout << "Popping a block of size " << pow(2, i) << std::endl;
                 if (i == check) {
                     ret = map[i].allocNode();
-                    allocated[i].addCopyOfNode(ret);
+                    allocated[i].addNode(ret);
 
                     if (!wasAllocated) {
                         _currAlloc += size;
@@ -135,6 +135,7 @@ void MemoryManager::returnMemory(FreeNode *f) {
                             //filler = map[i - 1].getPairAt(block);
                            // returned =map[i].getPairAt(block,map,i,counter,f,size,allocated,returned);
 //                            filler = &block[(index * counter) - (size)];
+                            break;
                         } else {
                             filler = nullptr;
                         }
@@ -149,7 +150,7 @@ void MemoryManager::returnMemory(FreeNode *f) {
 //                        } else if (pow(2, i) == size) {
 //                            returned = true;
 //                            FreeList &list = allocated[whichPowerOfTwo(f->getBlockSize())];
-//                            map[whichPowerOfTwo(f->getBlockSize())].add(list.removeCopyOfNode(f));
+//                            map[whichPowerOfTwo(f->getBlockSize())].add(list.removeNode(f));
 //                        } else {
 //                            map[i].add(new FreeNode(filler, counter));
 //                        }
@@ -163,7 +164,7 @@ void MemoryManager::returnMemory(FreeNode *f) {
 //                    }
 //                    else if(filler) {
 //                        FreeList &list = allocated[whichPowerOfTwo(f->getBlockSize())];
-//                        map[whichPowerOfTwo(f->getBlockSize())].add(list.removeCopyOfNode(f));
+//                        map[whichPowerOfTwo(f->getBlockSize())].add(list.removeNode(f));
 //                        ++counters[i];
 //                        break;
 //                    }
@@ -183,7 +184,7 @@ void MemoryManager::returnMemory(FreeNode *f) {
                         if (pow(2, i) == size) {
                             returned = true;
                             FreeList &list = allocated[whichPowerOfTwo(f->getBlockSize())];
-                            map[whichPowerOfTwo(f->getBlockSize())].add(list.removeCopyOfNode(f));
+                            map[whichPowerOfTwo(f->getBlockSize())].add(list.removeNode(f));
                         } else {
                             map[i].add(new FreeNode(filler, counter));
                         }
@@ -198,7 +199,7 @@ void MemoryManager::returnMemory(FreeNode *f) {
 
     /* Removing specific node from the freelist */
 //    FreeList &list = allocated[whichPowerOfTwo(f->getBlockSize())];
-//    map[whichPowerOfTwo(f->getBlockSize())].add(list.removeCopyOfNode(f));
+//    map[whichPowerOfTwo(f->getBlockSize())].add(list.removeNode(f));
 
     //delete f;
 }

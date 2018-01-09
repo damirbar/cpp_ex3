@@ -20,6 +20,7 @@ class FreeList {
     FreeNode *tail;
 
     size_t _size;
+    size_t _numOfPairs;
 
     FreeNode *getHead();
 
@@ -33,6 +34,8 @@ public:
 
     size_t size() const;
 
+    size_t pairs();
+
     void add(char *block, size_t size);
 
     void add(FreeNode *f);
@@ -41,12 +44,23 @@ public:
 
     char *alloc();
 
-    void removeCopyOfNode(FreeNode *f);
+    FreeNode * removeCopyOfNode(FreeNode *f);
 
     void addCopyOfNode(FreeNode *f);
 
 //    void dealloc(char *block);
 
+    void updatePairs();
+
+    char *getPairAt(char *string);
+
+    bool getPairAt(char *block, FreeList *map, int i, size_t counter, FreeNode *f, size_t size,
+                    FreeList *allocated,bool test);
+    int whichPowerOfTwo(size_t n) ;
+
+    void remove();
+
+    bool contains(char *string);
 };
 
 

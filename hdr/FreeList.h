@@ -44,7 +44,7 @@ public:
 
     char *alloc();
 
-    FreeNode * removeNode(FreeNode *f);
+    FreeNode *removeNode(FreeNode *f);
 
     void addNode(FreeNode *f);
 
@@ -55,12 +55,17 @@ public:
     char *getPairAt(char *string);
 
     bool getPairAt(char *block, FreeList *map, int i, size_t counter, FreeNode *f, size_t size,
-                    FreeList *allocated,bool test);
-    int whichPowerOfTwo(size_t n) ;
+                   FreeList *allocated, bool test);
+
+    int whichPowerOfTwo(size_t n);
 
     void remove();
 
+    char* removeNodeOfBlock(char *block);
+
     bool contains(char *string);
+
+    void addBlock(char *block, size_t size);
 };
 
 

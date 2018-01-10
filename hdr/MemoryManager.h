@@ -18,6 +18,8 @@ class MemoryManager {
     size_t _poolSize;
     size_t _currAlloc;
 
+    bool valgrindFlag;
+
     int whichPowerOfTwo(size_t n);
 
     int counters[11];
@@ -25,13 +27,17 @@ class MemoryManager {
 
 public:
 
-    explicit MemoryManager(size_t size);
+    explicit MemoryManager(size_t size, bool valgrind=false);
 
     ~MemoryManager();
 
     FreeNode *getMemory(size_t size);
 
+    char *getMemoryBlock(size_t size);
+
     void returnMemory(FreeNode *f);
+
+    void returnMemoryBlock(char *f, size_t size);
 
     void printCurrMemoryState();
 
@@ -41,6 +47,7 @@ public:
 
     void printCurrMemoryStateShortly();
 };
+
 
 
 #endif //CPP_EX3_MEMORYMANAGER_H

@@ -5,9 +5,9 @@
 #include <cmath>
 #include "../hdr/MemoryManager.h"
 
-MemoryManager::MemoryManager(size_t size)
+MemoryManager::MemoryManager(size_t size, bool valgrind)
         : map(new FreeList[11]), allocated(new FreeList[11]), _mmpl(MemPool::getInstance()),
-          _poolSize((size_t) pow(2, ceil(log(size) / log(2)))), _currAlloc(0) {
+          _poolSize((size_t) pow(2, ceil(log(size) / log(2)))), _currAlloc(0), valgrindFlag(valgrind) {
     _mmpl.setPool(size);
     init();
 }
@@ -207,20 +207,23 @@ void MemoryManager::returnMemory(FreeNode *f) {
 MemoryManager::~MemoryManager() {
     delete[] map;
 
-    int bytesForgotten = 0;
-    int placesForgotten = 0;
-    for (int i = 0; i < 11; ++i) {
-        if (allocated[i].size() > 0) {
-            std::cout << "Lost " << allocated[i].size() << " blocks of size " << pow(2, i) << std::endl;
-            bytesForgotten += allocated[i].size() * pow(2, i);
-            placesForgotten += allocated[i].size();
+    if (valgrindFlag) {
+
+        int bytesForgotten = 0;
+        int placesForgotten = 0;
+        for (int i = 0; i < 11; ++i) {
+            if (allocated[i].size() > 0) {
+                std::cout << "Lost " << allocated[i].size() << " blocks of size " << pow(2, i) << std::endl;
+                bytesForgotten += allocated[i].size() * pow(2, i);
+                placesForgotten += allocated[i].size();
 
 //            delete (allocated[i]);
+            }
         }
-    }
-    if (bytesForgotten > 0) {
-        std::cout << "\t\t\t\tTotal: lost " << bytesForgotten << " bytes in " << placesForgotten << " places"
-                  << std::endl;
+        if (bytesForgotten > 0) {
+            std::cout << "\t\t\t\tTotal: lost " << bytesForgotten << " bytes in " << placesForgotten << " places"
+                      << std::endl;
+        }
     }
     delete[] allocated;
 }
@@ -288,6 +291,145 @@ void MemoryManager::printCurrAllocatedMemoryState() {
             std::cout << "\n" << std::endl;
         }
     }
+}
+
+char *MemoryManager::getMemoryBlock(size_t size) {
+
+    std::cout << "Got a memory request of size " << size << ", but will return memory of size "
+              << (int) pow(2, ceil(log(size) / log(2))) << std::endl;
+
+    FreeNode *ret = nullptr;
+
+    size = (size_t) pow(2, ceil(log(size) / log(2)));
+    bool wasAllocated = false;
+
+    int check = whichPowerOfTwo(size);
+    if (check != -1) {
+
+        int nextPow = (int) pow(2, ceil(log(size) / log(2)));
+        for (int i = 0; i < 11; ++i) {
+
+//            if (i != check) {
+//                if (map[i].size() != 0) {
+//                    for (int j = 0; j == 0 || j < nextPow; ++j) {
+//                        std::cout << "Popping a block of size " << pow(2, i) << std::endl;
+//                        delete map[i].allocNode();
+//                        --counters[i];
+//                    }
+//                }
+//                // TODO else
+//            }
+
+//            nextPow /= 2;
+
+            while (counters[i] * pow(2, i) > _poolSize - (!wasAllocated ? _currAlloc + size : _currAlloc)) {
+                std::cout << "Popping a block of size " << pow(2, i) << std::endl;
+                if (i == check) {
+                    ret = map[i].allocNode();
+                    allocated[i].addNode(ret);
+
+                    if (!wasAllocated) {
+                        _currAlloc += size;
+                        wasAllocated = true;
+                    }
+
+//                    allocated[i].add(ret);
+                } else {
+                    delete map[i].allocNode();
+                }
+
+                --counters[i];
+
+            }
+
+        }
+
+//        --counters[check];
+//        return map[check].allocNode();
+        if (!ret) {
+            std::cout << "Returning a nullptr. Not enough memory" << std::endl;
+            return nullptr;
+        } else {
+            std::cout << "Returning a block of size " << (int) pow(2, check) << std::endl;
+            return ret->getBlock();
+        }
+    }
+
+    return nullptr;
+
+}
+
+
+
+void MemoryManager::returnMemoryBlock(char *f, size_t size) {
+
+
+    if (!f) {
+        std::cout << "Tried to delete a block, but it's actually nullptr" << std::endl;
+        return;
+    }
+
+    std::cout << "Attempting to return a memory of size " << size << std::endl;
+    int check = whichPowerOfTwo(size);
+
+    if (check == -1) {
+        std::cerr << "Error returning memory" << std::endl;
+    } else {
+        char *block = f;
+//        size_t size = size;
+        _currAlloc -= size;
+        bool returned = false;
+
+        for (int i = 0; i < 11; ++i) {
+            size_t counter = (size_t) pow(2, i);
+
+            if (counter <= _poolSize) {
+
+                long j = 0, index = 0;
+
+                while ((counters[i] * pow(2, i)) + pow(2, i) <= _poolSize - _currAlloc) {
+                    char *filler;
+                    std::cout << "Adding a block of size " << pow(2, i) << std::endl;
+                    if (counter > size) {
+
+                        if (map[i - 1].pairs() > map[i].size()) {
+                            FreeNode* n = map[i-1].getHead();
+                            map[i].remove();
+                            while(n && n->next){
+                                if(n->next->getBlock()-n->getBlock() == pow(2,i-1)){
+                                    map[i].add(new FreeNode(n->getBlock(), counter));
+                                    n=n->next;
+                                }
+                                n=n->next;
+                            }
+                            break;
+                        } else {
+                            filler = nullptr;
+                        }
+                    } else {
+                        filler = &block[index * counter + (counter - (int) (pow(2, i)))];
+
+                    }
+
+                    if (!returned) {
+
+                        if (pow(2, i) == size) {
+                            returned = true;
+                            FreeList &list = allocated[whichPowerOfTwo(size)];
+                            map[whichPowerOfTwo(size)].addBlock(list.removeNodeOfBlock(f), size);
+                        } else {
+                            map[i].add(new FreeNode(filler, counter));
+                        }
+                    }
+                    ++counters[i];
+                    j += counter, ++index;
+                }
+
+            }
+        }
+    }
+
+
 }
 
 

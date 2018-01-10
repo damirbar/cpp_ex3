@@ -248,17 +248,17 @@ void FreeList::updatePairs() {
 
 
 char *FreeList::getPairAt(char *block) {
-    FreeNode* node = head;
+    FreeNode *node = head;
 
-    while(node){
-        if(node->getBlock()==block && node->next && node->next->getBlock() -node->getBlock()==node->getBlockSize()) {
+    while (node) {
+        if (node->getBlock() == block && node->next &&
+            node->next->getBlock() - node->getBlock() == node->getBlockSize()) {
             return node->getBlock();
-        }
-        else if(node->getBlock()==block && node->prev && node->getBlock() -node->prev->getBlock()==node->getBlockSize()) {
+        } else if (node->getBlock() == block && node->prev &&
+                   node->getBlock() - node->prev->getBlock() == node->getBlockSize()) {
             return node->prev->getBlock();
-        }
-        else{
-            node=node->next;
+        } else {
+            node = node->next;
         }
     }
 }
@@ -344,5 +344,104 @@ void FreeList::remove() {
         delete head;
     }
     head = tail = nullptr;
-    _size=0;
+    _size = 0;
+}
+
+
+char *FreeList::removeNodeOfBlock(char *block) {
+
+
+    FreeNode *node = head;
+    if (!head) {
+        return nullptr;
+    }
+    if (node->getBlock() == block) {
+        std::cout << "Removed the head node with id = " << node->_id << std::endl;
+        FreeNode *node = head;
+        head = head->next;
+//        node = node->next;
+        node->next = node->prev = nullptr;
+        --_size;
+        return node->getBlock();
+    }
+
+    while (node->getBlock() != block && node->next != nullptr) {
+        node = node->next;
+    }
+    if (node->getBlock() == block) {
+        std::cout << "Removed the node with id = " << node->_id << std::endl;
+        node->prev->next = node->next;
+        if (node->next != nullptr) {
+            node->next->prev = node->prev;
+        }
+        node->next = node->prev = nullptr;
+        --_size;
+        return node->getBlock();
+    }
+}
+
+
+void FreeList::addBlock(char *block, size_t size) {
+    if (!head) {
+        head = tail = new FreeNode(block, size);
+    } else if (size == 1) {
+        if (block > head->getBlock()) {
+            tail->next = new FreeNode(block, size);
+            tail->next->prev = tail;
+            tail = tail->next;
+            tail->next = nullptr;
+        } else {
+            head->prev = new FreeNode(block, size);;
+            head->prev->next = head;
+            head = head->prev ;
+        }
+    } else {
+        FreeNode *tmp = head;
+
+        if (tmp->next == head) {
+            if (head->getBlock() > block) {
+                head->prev = new FreeNode(block, size);
+                head->prev->next = head;
+                head = head->prev;
+            } else {
+                head->next = new FreeNode(block, size);
+                head->next->prev = head;
+                tail = head->next;
+            }
+            return;
+        }
+        while (tmp && tmp->next && block > tmp->getBlock()) {
+            tmp = tmp->next;
+        }
+        if (tmp == tail) {
+            if (block > tail->getBlock()) {
+                tail->next = new FreeNode(block, size);
+                tail->next->prev = tail;
+                tail = tail->next;
+                tail->next = nullptr;
+            } else {
+//                if (tail->prev) {
+                    tail->prev->next = new FreeNode(block, size);
+                    tail->prev->next->prev = tail->prev;
+                    tail->prev = tail->prev->next;
+                    tail->prev->next->next = tail;
+//                }
+            }
+        } else {
+            if (tmp == head) {
+                head->prev = new FreeNode(block, size);
+                head->prev->next = head;
+                head = head->prev;
+            } else {
+                FreeNode *f = new FreeNode(block, size);
+                f->prev = tmp->prev;
+                f->next = tmp;
+                tmp->prev = f;
+                f->prev->next = f;
+            }
+
+        }
+
+    }
+    ++_size;
 }
